@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <algorithm>
 
 bool fits(const std::string &num)
 {
@@ -13,11 +12,11 @@ bool fits(const std::string &num)
 	} else if(!has_double && num[i+1] == num[i]) {
 	    if(i > 0 && i < num.size()-2
 	       && (num[i-1] == num[i] || num[i+2] == num[i])) {
-		has_double = false;
+	        continue;
 	    } else if(i == 0 && num[i+2] == num[i]){
-		has_double = false;
+	        continue;
 	    } else if(i == num.size()-2 && num[i-1] == num[i]) {
-		has_double = false;
+	        continue;
 	    } else {
 		has_double = true;
 	    }
