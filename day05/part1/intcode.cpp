@@ -104,9 +104,5 @@ int main()
 
     run(program);
     
-    /*printParseOutput(1002);
-    printParseOutput(104);
-    printParseOutput(3);*/
-    
     return 0;
 }

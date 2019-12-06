@@ -13,18 +13,19 @@ std::array<int, 4> parse(int instruction)
     return {opcode, param1Mode, param2Mode, param3Mode};
 }
 
-int getValue(const std::vector<int> &program, int mode, int instruction)
+int getValue(const std::vector<int> &program, int mode, int param)
 {
     if(mode == 0) {
-	auto value = program[instruction];
+	// Positional mode
+	auto value = program[param];
 	return value;
     } else if(mode == 1) {
-	return instruction;
+	// Immediate mode
+	return param;
     } else {
 	std::cerr << "Error: unknown mode: " << mode << " for instruction: "
-		  << instruction << '\n';
+		  << param << '\n';
 	exit(1);
-	return -1;
     }
 }
 
@@ -143,10 +144,6 @@ int main()
     }
 
     run(program);
-    
-    /*printParseOutput(1002);
-    printParseOutput(104);
-    printParseOutput(3);*/
     
     return 0;
 }
