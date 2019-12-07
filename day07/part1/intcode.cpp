@@ -150,7 +150,7 @@ int main()
 
     int highestOutput = 0;
     std::array<int,5> inputs{0, 1, 2, 3, 4};
-    while(std::next_permutation(inputs.begin(), inputs.end())) {
+    do {
 	std::vector<int> progA{program};
 	auto outputA = run(progA, {inputs[0], 0});
 
@@ -168,7 +168,7 @@ int main()
 	if(outputE > highestOutput) {
 	    highestOutput = outputE;
 	}
-    }
+    } while(std::next_permutation(inputs.begin(), inputs.end()));
 
     std::cout << "Highest output: " << highestOutput << "\n";
     

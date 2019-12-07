@@ -153,7 +153,7 @@ int main()
 
     int highestOutput = 0;
     std::array<int,5> phases{5, 6, 7, 8, 9};
-    while(std::next_permutation(phases.begin(), phases.end())) {
+    do {
 	Amp a(program, phases[0]);
 	Amp b(program, phases[1]);
 	Amp c(program, phases[2]);
@@ -175,7 +175,7 @@ int main()
 	if(outputE > highestOutput) {
 	    highestOutput = outputE;
 	}
-    }
+    } while(std::next_permutation(phases.begin(), phases.end()));
 
     std::cout << "Highest output: " << highestOutput << "\n";
     
