@@ -7,25 +7,32 @@
 constexpr int Rows = 6;
 constexpr int Cols = 25;
 
-int main()
+std::vector<std::array<char,Rows*Cols>> loadLayers(const char *path)
 {
-    std::ifstream file("input.txt");
-    std::vector<std::array<char,Cols*Rows>> layers;
-    std::array<char,Cols*Rows> currLayer;
+    std::ifstream file(path);
+    std::vector<std::array<char,Rows*Cols>> layers;
+    std::array<char,Rows*Cols> currLayer;
     int i = 0;
     while(file) {
 	char digit;
-	file >> digit;
-	if(digit == '\n') continue;
-	if(i < Cols * Rows) {
+        file >> digit;
+	if(!std::isdigit(digit)) continue;
+	if(i < Rows*Cols) {
 	    currLayer[i] = digit;
 	    ++i;
 	} else {
-	    // Done with this layer
-	    layers.push_back(currLayer);
+	    file.putback(digit);
 	    i = 0;
+	    layers.push_back(currLayer);
+	    currLayer = {};
 	}
     }
+    return layers;
+}
+
+int main()
+{
+    auto layers{loadLayers("input.txt")};
 
     auto minLayer = std::min_element(layers.begin(), layers.end(),
 				     [](auto &a, auto &b) {
