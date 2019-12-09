@@ -1,43 +1,5 @@
 #include <iostream>
-#include <fstream>
-#include <vector>
-#include <string>
-#include <array>
-
-std::array<int, 4> parse(int instruction)
-{
-    auto opcode = instruction % 100;
-    auto param1Mode = (instruction / 100) % 10;
-    auto param2Mode = (instruction / 1000) % 10;
-    auto param3Mode = (instruction / 10000) % 10;
-    return {opcode, param1Mode, param2Mode, param3Mode};
-}
-
-int getValue(const std::vector<int> &program, int mode, int param)
-{
-    if(mode == 0) {
-	// Positional mode
-	auto value = program[param];
-	return value;
-    } else if(mode == 1) {
-	// Immediate mode
-	return param;
-    } else {
-	std::cerr << "Error: unknown mode: " << mode << " for instruction: "
-		  << param << '\n';
-	exit(1);
-    }
-}
-
-void printParseOutput(int instruction)
-{
-    auto[opcode, param1Mode, param2Mode, param3Mode] = parse(instruction);
-    std::cout << "Instruction: " << instruction << '\n';
-    std::cout << "\tOpcode: " << opcode << '\n';
-    std::cout << "\tparam1Mode: " << param1Mode << '\n';
-    std::cout << "\tparam2Mode: " << param2Mode << '\n';
-    std::cout << "\tparam3Mode: " << param3Mode << '\n';
-}
+#include "../../util/intcode.hpp"
 
 int run(std::vector<int> &program, std::array<int,2> inputs)
 {
@@ -130,23 +92,7 @@ int run(std::vector<int> &program, std::array<int,2> inputs)
 
 int main()
 {
-    std::ifstream file("input.txt");
-    std::vector<int> program;
-
-    while(file) {
-	std::string cell;
-	std::getline(file, cell, ',');
-	if(cell.size() == 0 || cell == "\n") continue;
-	int curr;
-	try {
-	    curr = std::stoi(cell);
-	} catch(const std::invalid_argument &e) {
-	    std::cerr << "Error: Can't process: " << cell << '\n';
-	    continue;
-	}
-	// Add each int in the program
-	program.push_back(curr);
-    }
+    std::vector<int> program{loadProgram("input.txt")};
 
     int highestOutput = 0;
     std::array<int,5> inputs{0, 1, 2, 3, 4};
