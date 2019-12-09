@@ -73,30 +73,23 @@ public:
     {
 	while(i < program.size()) {
 	    auto[opcode, param1Mode, param2Mode, param3Mode] = parse(program[i]);
-	    //printParseOutput(program[i]);
 	    if(opcode == 1) {
 		// Add
 		auto a = getValue(param1Mode, program[i+1]);
 		auto b = getValue(param2Mode, program[i+2]);
-		//auto destination = program[i+3];
-		//program[destination] = a + b;
 		setValue(param3Mode, program[i+3], a + b);
 		i += 4;
 	    } else if(opcode == 2) {
 		// Multiply
 		auto a = getValue(param1Mode, program[i+1]);
 		auto b = getValue(param2Mode, program[i+2]);
-		//auto destination = program[i+3];
-		//program[destination] = a * b;
 		setValue(param3Mode, program[i+3], a * b);
 		i += 4;
 	    } else if(opcode == 3) {
 		// Replace with input
-		//auto destination = program[i+1];
 		std::cout << "Enter value: ";
 		long long value;
 		std::cin >> value;
-		//program[destination] = value;
 		setValue(param1Mode, program[i+1], value);
 		i += 2;
 	    } else if(opcode == 4) {
@@ -126,12 +119,9 @@ public:
 		// Less than
 		auto a = getValue(param1Mode, program[i+1]);
 		auto b = getValue(param2Mode, program[i+2]);
-		//auto destination = program[i+3];
 		if(a < b) {
-		    //program[destination] = 1;
 		    setValue(param3Mode, program[i+3], 1);
 		} else {
-		    //program[destination] = 0;
 		    setValue(param3Mode, program[i+3], 0);
 		}
 		i += 4;
@@ -139,12 +129,9 @@ public:
 		// Equal to
 		auto a = getValue(param1Mode, program[i+1]);
 		auto b = getValue(param2Mode, program[i+2]);
-		//auto destination = program[i+3];
 		if(a == b) {
-		    //program[destination] = 1;
 		    setValue(param3Mode, program[i+3], 1);
 		} else {
-		    //program[destination] = 0;
 		    setValue(param3Mode, program[i+3], 0);
 		}
 		i += 4;
@@ -187,10 +174,8 @@ int main()
 	program.push_back(curr);
     }
 
-    // run(program);
     Computer c(program);
     c();
-    //printParseOutput(119);
     
     return 0;
 }
