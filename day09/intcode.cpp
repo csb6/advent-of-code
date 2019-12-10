@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 #include <array>
+#include <type_traits>
+#include <optional>
 
 std::array<long long, 4> parse(int instruction)
 {
@@ -25,7 +27,33 @@ void printParseOutput(long long instruction)
     std::cout << "\tparam3Mode: " << param3Mode << '\n';
 }
 
+auto loadProgram(const char *path)
+{
+    std::ifstream file(path);
+    std::vector<long long> program;
+    program.resize(program.size() * 10);
+
+    while(file) {
+	std::string cell;
+	std::getline(file, cell, ',');
+	if(cell.size() == 0 || cell == "\n") continue;
+	long long curr;
+	try {
+	    curr = std::stoll(cell);
+	} catch(const std::invalid_argument &e) {
+	    std::cerr << "Error: Can't process: " << cell << '\n';
+	    continue;
+	}
+	// Add each int in the program
+	program.push_back(curr);
+    }
+    return program;
+}
+
+template<typename ReturnT = void>
 class Computer {
+    static_assert(std::is_same<ReturnT, void>::value
+		  || std::is_same<ReturnT, std::optional<long long>>::value);
 private:
     std::vector<long long> &program;
     unsigned long i = 0;
@@ -69,7 +97,7 @@ public:
 	}
     }
     
-    void operator()()
+    ReturnT operator()(long long input = 0)
     {
 	while(i < program.size()) {
 	    auto[opcode, param1Mode, param2Mode, param3Mode] = parse(program[i]);
@@ -87,16 +115,28 @@ public:
 		i += 4;
 	    } else if(opcode == 3) {
 		// Replace with input
-		std::cout << "Enter value: ";
 		long long value;
-		std::cin >> value;
+		if constexpr(std::is_same<ReturnT,void>::value) {
+		    // Accept input from std-in; user manually enters input 
+		    std::cout << "Enter value: ";
+		    std::cin >> value;
+		} else {
+		    // Accept input as arg (ex: like with amps problem) 
+		    value = input;
+		}    
 		setValue(param1Mode, program[i+1], value);
 		i += 2;
 	    } else if(opcode == 4) {
 		// Print value
 		auto value = getValue(param1Mode, program[i+1]);
-		std::cout << value << '\n';
 		i += 2;
+		if constexpr(std::is_same<ReturnT, void>::value) {
+		    // Print-to-std-out mod
+		    std::cout << value << '\n';
+		} else {
+		    // Return value instead of printing (for amp connections)
+		    return {value};
+		}
 	    } else if(opcode == 5) {
 		// Jump if true
 		auto condition = getValue(param1Mode, program[i+1]);
@@ -150,30 +190,15 @@ public:
 		exit(1);
 	    }
 	}
+	if constexpr(!std::is_same<ReturnT, void>::value) {
+	   return {};
+	}
     }
 };
 
 int main()
 {
-    std::ifstream file("input.txt");
-    std::vector<long long> program;
-    program.resize(program.size() * 100);
-
-    while(file) {
-	std::string cell;
-	std::getline(file, cell, ',');
-	if(cell.size() == 0 || cell == "\n") continue;
-	long long curr;
-	try {
-	    curr = std::stoll(cell);
-	} catch(const std::invalid_argument &e) {
-	    std::cerr << "Error: Can't process: " << cell << '\n';
-	    continue;
-	}
-	// Add each int in the program
-	program.push_back(curr);
-    }
-
+    auto program{loadProgram("input.txt")};
     Computer c(program);
     c();
     
