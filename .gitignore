@@ -7,3 +7,5 @@
 *image
 *asteroid
 *moon
+*libtermbox.a
+*termbox.h
